@@ -38,7 +38,7 @@ jobs:
           containers="${{ steps.get_containers.outputs.containers }}"
           for container_name in $containers; do
             echo "Scanning and Generating SBOM for container: $container_name"
-            syft list -i docker://$container_name --output-format cyclonedx > sbom-$container_name.json
+            syft $container_name -o cyclonedx-json > sbom-$container_name.json
           done
           
       - name: Combine SBOMs
