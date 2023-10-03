@@ -35,7 +35,7 @@ jobs:
       - name: Scan and Generate SBOM
         id: scan_and_generate_sbom
         run: |
-          images="${{ steps.get_containers.outputs.images }}"
+          images=$(docker ps --format "{{.Image}}")
           for image_name in "$images"; do
             echo "Scanning and Generating SBOM for container: $image_name"
             syft $image_name -o cyclonedx-json > sbom-$image_name.json
