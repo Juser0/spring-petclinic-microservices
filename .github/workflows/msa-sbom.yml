@@ -6,7 +6,7 @@ name: Syft Scan
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   syft_scan:
