@@ -37,9 +37,11 @@ jobs:
         run: |
           image_names_string=$(docker ps --format "{{.Image}}")
           IFS=$'\n' read -ra image_names <<< "$image_names_string"
+          
           for image_name in "${image_names[@]}"; do
             echo "Scanning and Generating SBOM for container: $image_name"
-            syft $image_name -o cyclonedx-json > sbom-$image_name.json
+            result=$(echo "$image_name" | awk -F/ '{print $2}')
+            syft $image_name -o cyclonedx-json > sbom-$result.json
           done
           
       - name: Combine SBOMs
