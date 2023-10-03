@@ -16,11 +16,10 @@ jobs:
       - name: Start Docker Compose
         run: docker-compose up -d
 
-      - name: Get container list
+      - name: Get Image list
         id: get_containers
         run: |
-          container_names=$(docker-compose ps --services)
-          echo "::set-output name=containers::$container_names"
+          images=$(docker ps --format "{{.Image}}")
           
       - name: Download Syft
         run: |
@@ -35,10 +34,10 @@ jobs:
       - name: Scan and Generate SBOM
         id: scan_and_generate_sbom
         run: |
-          containers="${{ steps.get_containers.outputs.containers }}"
-          for container_name in $containers; do
-            echo "Scanning and Generating SBOM for container: $container_name"
-            syft $container_name -o cyclonedx-json > sbom-$container_name.json
+          images="${{ steps.get_containers.outputs.images }}"
+          for image_name in $images; do
+            echo "Scanning and Generating SBOM for container: $image_name"
+            syft $image_name -o cyclonedx-json > sbom-$image_name.json
           done
           
       - name: Combine SBOMs
