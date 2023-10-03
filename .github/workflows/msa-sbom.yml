@@ -13,15 +13,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Start Docker Compose
-        run: docker-compose up -d
-
-      - name: Get container list
-        id: get_containers
-        run: |
-          container_names=$(docker-compose ps --services)
-          echo "::set-output name=containers::$container_names"
-
       - name: Download Syft
         run: |
           wget https://github.com/anchore/syft/releases/download/v0.92.0/syft_0.92.0_linux_amd64.tar.gz
@@ -29,23 +20,6 @@ jobs:
 
       - name: Make Syft executable
         run: |
-          mv syft /usr/local/bin/syft
-          chmod +x syft
-
-      - name: Scan and Generate SBOM
-        id: scan_and_generate_sbom
-        run: |
-          containers="${{ steps.get_containers.outputs.containers }}"
-          for container_name in $containers; do
-            echo "Scanning and Generating SBOM for container: $container_name"
-            syft list -i docker://$container_name --output-format cyclonedx > sbom-$container_name.json
-          done
-
-      - name: Combine SBOMs
-        run: cat sbom-*.json > combined-sbom.json
-
-      - name: Upload Combined SBOM
-        uses: actions/upload-artifact@v2
-        with:
-          name: sboms
-          path: combined-sbom.json
+          ls -l
+          mv syft_linux /usr/local/bin/syft
+          chmod +x syft_linux
