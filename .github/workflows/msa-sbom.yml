@@ -21,5 +21,5 @@ jobs:
       - name: Make Syft executable
         run: |
           ls -l
-          mv syft_linux /usr/local/bin/syft
+          mv syft /usr/local/bin
           chmod +x syft_linux
