@@ -22,10 +22,14 @@ jobs:
           container_names=$(docker-compose ps --services)
           echo "::set-output name=containers::$container_names"
 
-      - name: Install Syft
+      - name: Download Syft
         run: |
-          wget https://github.com/anchore/syft/releases/download/v0.92.0/syft-linux -O /usr/local/bin/syft
-          chmod +x /usr/local/bin/syft
+          wget https://github.com/anchore/syft/releases/download/v0.92.0/syft_0.92.0_linux_amd64.tar.gz
+          tar -xzvf syft_0.92.0_linux_amd64.tar.gz
+
+      - name: Make Syft executable
+        run: |
+          chmod +x syft
 
       - name: Scan and Generate SBOM
         id: scan_and_generate_sbom
