@@ -29,6 +29,7 @@ jobs:
 
       - name: Make Syft executable
         run: |
+          mv syft_0.92.0_linux_amd64/syft /usr/local/bin/
           chmod +x syft
 
       - name: Scan and Generate SBOM
