@@ -35,20 +35,20 @@ jobs:
       - name: Scan and Generate SBOM
         id: scan_and_generate_sbom
         run: |
+          mkdir results
+          cd results
           image_names_string=$(docker ps --format "{{.Image}}")
-          IFS=$'\n' read -ra image_names <<< "$image_names_string"
+          IFS='\n'
+          read -ra image_names <<< "$image_names_string"
           
           for image_name in "${image_names[@]}"; do
             echo "Scanning and Generating SBOM for container: $image_name"
             result=$(echo "$image_name" | awk -F/ '{print $2}')
             syft $image_name -o cyclonedx-json > sbom-$result.json
           done
-          
-      - name: Combine SBOMs
-        run: cat sbom-*.json > combined-sbom.json
 
       - name: Upload Combined SBOM
         uses: actions/upload-artifact@v2
         with:
           name: sboms
-          path: combined-sbom.json
+          path: results
