@@ -38,7 +38,7 @@ jobs:
           mkdir results
           cd results
           image_names_string=$(docker ps --format "{{.Image}}")
-          IFS='\n'
+          IFS=
           read -ra image_names <<< "$image_names_string"
           
           for image_name in "${image_names[@]}"; do
