@@ -29,11 +29,12 @@ jobs:
 
     - name: Extract image name and UUID
       run: |
-        image_name="${{ matrix.service }}"
-        image_suffix="${image_name#*/}"
+        service="${{ matrix.service }}"
+        image_suffix="${service#*/}"
+        image_name="${image_suffix%%:*}"
         uuid="${image_suffix#*:}"
-        echo "image_name=${image_suffix%%:*}" >> $GITHUB_ENV
-        echo "uuid=$uuid" >> $GITHUB_ENV
+        echo "image_name=${image_name}" >> $GITHUB_ENV
+        echo "uuid=${uuid}" >> $GITHUB_ENV
 
     - name: Execute docker-compose
       run: docker-compose up -d
