@@ -6,49 +6,35 @@ on:
       - master
 
 jobs:
-  syft_scan:
+  build:
+    strategy:
+      matrix:
+        service:
+          - springcommunity/spring-petclinic-customers-service
+          - springcommunity/spring-petclinic-api-gateway
+          - springcommunity/spring-petclinic-visits-service
+          - springcommunity/spring-petclinic-admin-server
+          - springcommunity/spring-petclinic-vets-service
+          - springcommunity/spring-petclinic-discovery-server
+          - springcommunity/spring-petclinic-config-server
+          - spring-petclinic-microservices_prometheus-server
+          - openzipkin/zipkin
+          - spring-petclinic-microservices_grafana-server
+
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Start Docker Compose
-        run: docker-compose up -d
+    - name: Build Docker image
+      run: docker build -t ${{ matrix.service }} .
 
-      - name: Get Image list
-        id: get_containers
-        run: |
-          images=$(docker ps --format "{{.Image}}")
-          echo "$images"
-          
-      - name: Download Syft
-        run: |
-          wget https://github.com/anchore/syft/releases/download/v0.92.0/syft_0.92.0_linux_amd64.tar.gz
-          tar -xzvf syft_0.92.0_linux_amd64.tar.gz
-
-      - name: Make Syft executable
-        run: |
-          mv syft /usr/local/bin
-          chmod +x /usr/local/bin/syft
-          
-      - name: Scan and Generate SBOM
-        id: scan_and_generate_sbom
-        run: |
-          mkdir results
-          cd results
-          image_names_string=$(docker ps --format "{{.Image}}")
-          IFS=$'\n'
-          read -ra image_names <<< "$image_names_string"
-          
-          for image_name in "${image_names[@]}"; do
-            echo "Scanning and Generating SBOM for container: $image_name"
-            result=$(echo "$image_name" | awk -F/ '{print $2}')
-            syft $image_name -o cyclonedx-json > sbom-$result.json
-          done
-
-      - name: Upload Combined SBOM
-        uses: actions/upload-artifact@v2
-        with:
-          name: sboms
-          path: results
+    - name: Scan the image and upload dependency results
+      uses: anchore/sbom-action@bb716408e75840bbb01e839347cd213767269d4a
+      with:
+        image: ${{ matrix.service }}
+        format: cyclonedx-json
+        artifact-name: sbom-${{ matrix.service#*/ }}-cyclonedx.json
+        github-token: ${{ secrets.PERSONAL_TOKEN }}
+        dependency-snapshot: true
