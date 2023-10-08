@@ -20,6 +20,17 @@ jobs:
           - spring-petclinic-microservices_prometheus-server
           - openzipkin/zipkin
           - spring-petclinic-microservices_grafana-server
+        uuid:
+         - 9880c46e-53ba-45b4-8241-90e2d769deb6
+         - c89d2d96-a385-4dc4-9c8b-7ee50432165c
+         - de9c0cf5-c28a-4b88-bd63-5d12cbffe869
+         - 8dc6df9b-e1d5-4520-882b-1ccf263d808f
+         - 97ac11f5-4310-4bd9-bb8f-7711c2ab9234
+         - 18b3f8d6-c497-413b-94c3-007b9224719a
+         - fc4c86a6-1e78-453c-b086-2169857688bd
+         - 3c1edbdc-b7d7-4eb1-89ad-ca944218459d
+         - 596d6ae7-155a-4748-8e86-4551a838c0d7
+         - c367fabe-7864-4bdb-994e-3981270777f1
 
     runs-on: ubuntu-latest
     
@@ -37,10 +48,30 @@ jobs:
       run: docker-compose up -d
 
     - name: Scan the image and upload dependency results
-      uses: anchore/sbom-action@bb716408e75840bbb01e839347cd213767269d4a
+      uses: anchore/sbom-action@v0.14.3
       with:
         image: ${{ matrix.service }}
         format: cyclonedx-json
         artifact-name: sbom-${{ env.image_suffix }}-cyclonedx.json
         github-token: ${{ secrets.PERSONAL_TOKEN }}
         dependency-snapshot: true
+
+    - name: Build SBOM Vulnerability Analyzer
+      run: |
+        docker pull justuser0129/sva
+        docker build -t justuser0129/sva .
+        docker run -d -p 7777:8080 justuser0129/sva
+
+    - name: SBOM Scan and Export Result
+      run: |
+        mkdir report
+        cd report
+        curl -X GET 'http://localhost:7777/api/v1/sbom/report?token=${{ secrets.TRACKER_TOKEN }}&projectId=${{ matrix.uuid }}&baseUrl=${{ secrets.TRACKER_URL }}' -H 'accept: application/json;charset=UTF-8' | jq '.' > sbom-${{ env.image_suffix }}-result.json
+
+    - name: Upload results
+      uses: actions/upload-artifact@v2
+      with:
+        name: sbom-${{ env.image_suffix }}-result
+        path: report/sbom-${{ env.image_suffix }}-result.json
+    
+
