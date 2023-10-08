@@ -58,7 +58,6 @@ jobs:
     - name: Build SBOM Vulnerability Analyzer
       run: |
         docker pull justuser0129/sva
-        docker build -t justuser0129/sva .
         docker run -d -p 7777:8080 justuser0129/sva
 
     - name: SBOM Scan and Export Result
