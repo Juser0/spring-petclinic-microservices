@@ -31,7 +31,7 @@ jobs:
       run: |
         image_name="${{ matrix.service }}"
         image_suffix="${image_name#*/}"
-        echo "::set-output name=image_suffix::$image_suffix"
+        echo "image_suffix=${image_suffix}" >> $GITHUB_ENV
 
     - name: Execute docker-compose
       run: docker-compose up -d
@@ -41,6 +41,6 @@ jobs:
       with:
         image: ${{ matrix.service }}
         format: cyclonedx-json
-        artifact-name: sbom-${{ steps.extract_image_name.outputs.image_suffix }}-cyclonedx.json
+        artifact-name: sbom-${{ env.image_suffix }}-cyclonedx.json
         github-token: ${{ secrets.PERSONAL_TOKEN }}
         dependency-snapshot: true
