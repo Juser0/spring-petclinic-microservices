@@ -27,13 +27,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Extract image name and UUID
+    - name: Extract image parts
       run: |
         service="${{ matrix.service }}"
-        image_suffix="${service#*/}"
-        image_name="${image_suffix%%:*}"
-        uuid="${image_suffix#*:}"
+        image_name="${service%%:*}"  # : 이전의 부분 전체를 추출
+        file_name="${service#*/}"  # / 이후와 : 이전의 부분 전체를 추출
+        uuid="${after_slash_and_before_colon#*:}"  # : 이후의 부분 전체를 추출
         echo "image_name=${image_name}" >> $GITHUB_ENV
+        echo "file_name=${file_name}" >> $GITHUB_ENV
         echo "uuid=${uuid}" >> $GITHUB_ENV
 
     - name: Execute docker-compose
@@ -42,9 +43,9 @@ jobs:
     - name: Scan the image and upload dependency results
       uses: anchore/sbom-action@v0.14.3
       with:
-        image: ${{ matrix.service }}
+        image: ${{ env.image_name }}
         format: cyclonedx-json
-        artifact-name: sbom-${{ env.image_suffix }}-cyclonedx.json
+        artifact-name: sbom-${{ env.file_name }}-cyclonedx.json
         github-token: ${{ secrets.PERSONAL_TOKEN }}
         dependency-snapshot: true
 
@@ -58,12 +59,12 @@ jobs:
       run: |
         mkdir report
         cd report
-        curl -X GET 'http://localhost:7777/api/v1/sbom/report?token=${{ secrets.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ secrets.TRACKER_URL }}' -H 'accept: application/json;charset=UTF-8' | jq '.' > sbom-${{ env.image_suffix }}-result.json
+        curl -X GET 'http://localhost:7777/api/v1/sbom/report?token=${{ secrets.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ secrets.TRACKER_URL }}' -H 'accept: application/json;charset=UTF-8' | jq '.' > sbom-${{ env.file_name }}-result.json
 
     - name: Upload results
       uses: actions/upload-artifact@v2
       with:
-        name: sbom-${{ env.image_suffix }}-result
-        path: report/sbom-${{ env.image_suffix }}-result.json
+        name: sbom-${{ env.file_name }}-result
+        path: report/sbom-${{ env.file_name }}-result.json
     
 
