@@ -30,9 +30,9 @@ jobs:
     - name: Extract image parts
       run: |
         service="${{ matrix.service }}"
-        image_name="${service%%:*}"  # : 이전의 부분 전체를 추출
-        file_name="${service#*/}"  # / 이후와 : 이전의 부분 전체를 추출
-        uuid="${after_slash_and_before_colon#*:}"  # : 이후의 부분 전체를 추출
+        image_name="${service%%:*}"
+        file_name="${image_name#*/}"
+        uuid="${service##*:}"
         echo "image_name=${image_name}" >> $GITHUB_ENV
         echo "file_name=${file_name}" >> $GITHUB_ENV
         echo "uuid=${uuid}" >> $GITHUB_ENV
