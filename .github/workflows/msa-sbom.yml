@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build:
+  scan:
     strategy:
       matrix:
         service:
@@ -34,7 +34,9 @@ jobs:
         echo "::set-output name=image_suffix::$image_suffix"
       
     - name: Build Docker image
-      run: docker build -t ${{ matrix.service }} .
+      run: |
+        docker pull ${{ matrix.service }}
+        docker build -t ${{ matrix.service }} .
 
     - name: Scan the image and upload dependency results
       uses: anchore/sbom-action@bb716408e75840bbb01e839347cd213767269d4a
