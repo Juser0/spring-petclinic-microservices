@@ -75,5 +75,8 @@ jobs:
         name: sbom-${{ env.file_name }}-result
         path: report/sbom-${{ env.TRACKER_TOKEN }}-result.json
         if-no-files-found: warn
+      env:
+        TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
+        BASE_URL: ${{ secrets.TRACKER_URL }}
     
 
