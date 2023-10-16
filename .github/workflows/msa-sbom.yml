@@ -59,12 +59,12 @@ jobs:
       run: |
           docker network create my-network
           docker pull mysql
-          docker run -d --network my-network -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=sva -p 3306:3306 mysql:latest
+          docker run -d --network my-network --name mysql-container -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=sva -p 3306:3306 mysql:latest
 
     - name: Build SBOM Vulnerability Analyzer
       run: |
         docker pull justuser0129/sva
-        docker run -d --network my-network -p 7777:8080 justuser0129/sva
+        docker run -d --network my-network --name sva -p 7777:8080 justuser0129/sva
 
     - name: SBOM Scan and Export Result
       run: |
