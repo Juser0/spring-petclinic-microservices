@@ -55,10 +55,15 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: Build MySQL
+      run: |
+          docker pull mysql
+          docker run -it -e MYSQL_ROOT_PASSWORD=root -d -p 3306:3306 mysql
+
     - name: Build SBOM Vulnerability Analyzer
       run: |
         docker pull justuser0129/sva
-        docker run -d -p 7777:8080 justuser0129/sva
+        docker run -it -d -p 7777:8080 justuser0129/sva
 
     - name: SBOM Scan and Export Result
       run: |
