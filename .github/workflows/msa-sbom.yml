@@ -64,7 +64,7 @@ jobs:
     - name: Build SBOM Vulnerability Analyzer
       run: |
         docker pull justuser0129/sva
-        docker run -d --network my-network --name sva -p 7777:8080 justuser0129/sva:latest
+        docker run -d --network my-network --name sva -p 7777:7777 justuser0129/sva:latest
 
     - name: Wait for init
       run: sleep 30
