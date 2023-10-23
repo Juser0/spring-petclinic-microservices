@@ -64,7 +64,7 @@ jobs:
     - name: Build SBOM Vulnerability Analyzer
       run: |
         docker pull justuser0129/sva
-        docker run -d --network my-network --name sva -p 7777:7777 justuser0129/sva:latest
+        docker run -d --network my-network --name sva -p 7777:8080 justuser0129/sva:latest
 
     - name: Wait for init
       run: sleep 30
@@ -76,7 +76,7 @@ jobs:
       run: |
         mkdir report
         cd report
-        curl "http://localhost:7777/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}" -H "accept: */*" -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
+        curl 'http://localhost:7777/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' -H "accept: */*" -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
         TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
         BASE_URL: ${{ secrets.TRACKER_URL }}
