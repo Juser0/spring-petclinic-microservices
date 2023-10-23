@@ -67,7 +67,7 @@ jobs:
         docker run -d --network my-network --name sva -p 7777:8080 justuser0129/sva:latest
 
     - name: GET log
-      run: docker logs sva
+      run: docker ps
 
     - name: SBOM Scan and Export Result
       run: |
