@@ -74,7 +74,7 @@ jobs:
         mkdir report
         cd report
         sudo ufw allow 7777
-        curl -m 60 -X GET "http://127.0.0.1:7777/api/v1/sbom/report?token=$TRACKER_TOKEN&projectId=${{ env.uuid }}&baseUrl=$BASE_URL" \
+        curl -m 60 -X GET "http://sva:7777/api/v1/sbom/report?token=$TRACKER_TOKEN&projectId=${{ env.uuid }}&baseUrl=$BASE_URL" \
         -H "accept: */*" \
         -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
