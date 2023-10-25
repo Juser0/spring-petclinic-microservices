@@ -69,25 +69,15 @@ jobs:
     - name: Wait for init
       run: sleep 30
 
-    - name: get log
+    - name: SBOM Scan and Export Result
       run: |
         mkdir report
         cd report
-        docker logs sva > log.txt
-
-    - name: SBOM Scan and Export Result
-      run: |
         curl 'http://localhost:7777/api/v1/sbom/report?token="${{ env.TRACKER_TOKEN }}"&projectId="${{ env.uuid }}"&baseUrl="${{ env.BASE_URL }}"' -H "accept: */*" -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
+        cat sbom-${{ env.file_name }}-result.json
       env:
         TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
         BASE_URL: ${{ secrets.TRACKER_URL }}
-
-    - name: Upload results
-      uses: actions/upload-artifact@v3.1.3
-      with:
-        name: sbom-${{ env.file_name }}-log
-        path: report/log.txt
-        if-no-files-found: warn
     
     - name: Upload results
       uses: actions/upload-artifact@v3.1.3
