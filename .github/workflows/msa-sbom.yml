@@ -73,7 +73,7 @@ jobs:
       run: |
         mkdir report
         cd report
-        curl 'http://localhost:7777/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId="${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' -H "accept: */*" -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
+        curl 'http://localhost:7777/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' -H "accept: */*" -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
         TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
         BASE_URL: ${{ secrets.TRACKER_URL }}
