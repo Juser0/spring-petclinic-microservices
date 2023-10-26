@@ -72,7 +72,7 @@ jobs:
     - name: SBOM Scan and Export Result
       run: |
         mkdir report
-        docker exec --it sva /bin/bash
+        docker exec -it sva /bin/bash
         curl -m 60 -X GET "http://localhost:8080/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN}}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL}}" \
         -H "accept: */*" \
         -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
