@@ -58,7 +58,7 @@ jobs:
       run: |
         mkdir report
         cd report
-        curl -m 60 -X GET ${{ secrets.DOCKER_URL }} \
+        curl -m 60 -X GET "${{ secrets.DOCKER_URL }}" \
         -H "accept: */*" \
         -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
         docker cp sva:/sbom-${{ env.file_name }}-result.json /home/runner/report
