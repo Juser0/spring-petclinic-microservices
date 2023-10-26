@@ -37,18 +37,6 @@ jobs:
         echo "file_name=${file_name}" >> $GITHUB_ENV
         echo "uuid=${uuid}" >> $GITHUB_ENV
 
-    - name: Execute docker-compose
-      run: docker-compose up -d
-
-    - name: Scan the image and upload dependency results
-      uses: anchore/sbom-action@v0.14.3
-      with:
-        image: ${{ env.image_name }}
-        format: cyclonedx-json
-        artifact-name: sbom-${{ env.file_name }}-cyclonedx.json
-        github-token: ${{ secrets.PERSONAL_TOKEN }}
-        dependency-snapshot: true
-
     - name: Docker Login
       uses: docker/login-action@v3.0.0
       with:
@@ -66,14 +54,11 @@ jobs:
         docker pull justuser0129/sva
         docker run -d --network my-network --name sva -p 7777:8080 justuser0129/sva:latest
 
-    - name: Wait for init
-      run: sleep 30
-
     - name: SBOM Scan and Export Result
       run: |
         mkdir report
-        docker exec -it sva /bin/bash
-        curl -m 60 -X GET "http://localhost:8080/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN}}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL}}" \
+        cd report
+        curl -m 60 -X GET ${{ secret.DOCKER_URL }} \
         -H "accept: */*" \
         -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
         docker cp sva:/sbom-${{ env.file_name }}-result.json /home/runner/report
