@@ -72,11 +72,11 @@ jobs:
     - name: SBOM Scan and Export Result
       run: |
         mkdir report
-        cd report
-        sudo ufw allow 7777
-        curl -m 60 -X GET "http://127.0.0.1:7777/api/v1/sbom/report?token=$TRACKER_TOKEN&projectId=${{ env.uuid }}&baseUrl=$BASE_URL" \
+        docker exec --it sva /bin/bash
+        curl -m 60 -X GET "http://localhost:8080/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN}}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL}}" \
         -H "accept: */*" \
         -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
+        docker cp sva:/sbom-${{ env.file_name }}-result.json /home/runner/report
       env:
         TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
         BASE_URL: ${{ secrets.TRACKER_URL }}
