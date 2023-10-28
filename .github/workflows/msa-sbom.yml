@@ -28,20 +28,16 @@ jobs:
       run: |
           mkdir report
           cd report
-          curl -m 60 -X GET 'http://localhost:8080/api/v1/sbom/test' | jq '.' > sbom-${{ env.file_name }}-result1.json
-          curl -m 60 -X GET 'http://localhost:8080/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' | jq '.' > sbom-${{ env.file_name }}-result.json
+          curl -m 60 -X GET 'http://localhost:8080/api/v1/sbom/test' > sbom--result1.json
       env:
         TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
         BASE_URL: ${{ secrets.TRACKER_URL }}
-
-    - name: Get log
-      run : cd report && cat sbom-${{ env.file_name }}-result.json
     
     - name: Upload results
       uses: actions/upload-artifact@v3.1.3
       with:
-        name: sbom-${{ env.file_name }}-result
-        path: report/sbom-${{ env.file_name }}-result1.json
+        name: sbom--result
+        path: report/sbom--result1.json
         if-no-files-found: warn
     
 
