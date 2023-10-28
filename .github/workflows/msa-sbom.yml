@@ -57,8 +57,8 @@ jobs:
           docker run -d --name sva -p 8080:8080 justuser0129/sva:latest
           mkdir report
           cd report
-          curl -m 60 -X GET 'http://host.docker.internal:8080/api/v1/sbom/test' | jq '.' > sbom-${{ env.file_name }}-result1.json
-          curl -m 60 -X GET 'http://host.docker.internal:8080/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' | jq '.' > sbom-${{ env.file_name }}-result.json
+          curl -m 60 -X GET 'http://localhost:8080/api/v1/sbom/test' | jq '.' > sbom-${{ env.file_name }}-result1.json
+          curl -m 60 -X GET 'http://localhost:8080/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
         TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
         BASE_URL: ${{ secrets.TRACKER_URL }}
