@@ -50,6 +50,7 @@ jobs:
           docker run -d --network my-network --name mysql-container -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=sva -p 3306:3306 mysql:latest
           docker pull justuser0129/sva
           docker run -d --network my-network --name sva -p 7777:8080 justuser0129/sva:latest
+          sudo ufw allow 7777
           mkdir report
           cd report
           curl -m 60 -X GET 'http://localhost:7777/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' \
