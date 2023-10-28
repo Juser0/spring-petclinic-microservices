@@ -11,6 +11,8 @@ jobs:
 
     container:
       image: justuser0129/sva:latest
+      ports:
+        - 8080:8080
 
     services:
       mysql-container:
@@ -26,12 +28,8 @@ jobs:
 
     - name: Build and Execute Application
       run: |
-          mkdir report
-          cd report
-          curl -m 60 -X GET 'http://localhost:8080/api/v1/sbom/test' > sbom--result1.json
-      env:
-        TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
-        BASE_URL: ${{ secrets.TRACKER_URL }}
+          mkdir report && cd report
+          curl -m 60 -X GET 'http://sva:8080/api/v1/sbom/test' > sbom--result1.json
     
     - name: Upload results
       uses: actions/upload-artifact@v3.1.3
@@ -39,5 +37,3 @@ jobs:
         name: sbom--result
         path: report/sbom--result1.json
         if-no-files-found: warn
-    
-
