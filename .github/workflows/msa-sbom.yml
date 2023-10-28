@@ -25,6 +25,8 @@ jobs:
 
     container:
       image: justuser0129/sva
+      ports: 
+        - 8080:8080
 
     services:
       mysql-container:
