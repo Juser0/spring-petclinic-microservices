@@ -53,7 +53,7 @@ jobs:
 
     - name: Build and Execute Application
       run: |
-          docker pull justuser0129:sva
+          docker pull justuser0129/sva
           docker run -d --name sva -p 8080:8080 justuser0129/sva:latest
           mkdir report
           cd report
