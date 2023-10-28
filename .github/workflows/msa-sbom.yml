@@ -53,6 +53,10 @@ jobs:
           sudo ufw allow 7777
           mkdir report
           cd report
+          docker ps
+          curl -m 60 -X GET 'http://localhost:7777/api/v1/sbom/test' \
+          -H "accept: */*" \
+          -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result1.json
           curl -m 60 -X GET 'http://localhost:7777/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' \
           -H "accept: */*" \
           -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
@@ -67,7 +71,7 @@ jobs:
       uses: actions/upload-artifact@v3.1.3
       with:
         name: sbom-${{ env.file_name }}-result
-        path: report/sbom-${{ env.file_name }}-result.json
+        path: report/sbom-${{ env.file_name }}-result1.json
         if-no-files-found: warn
     
 
