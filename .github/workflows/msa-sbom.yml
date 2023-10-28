@@ -22,6 +22,16 @@ jobs:
           - spring-petclinic-microservices_grafana-server:c367fabe-7864-4bdb-994e-3981270777f1
 
     runs-on: ubuntu-latest
+
+    services:
+      mysql-container:
+        image: mysql
+        ports:
+          - 3306:3306
+      sva:
+        image: justuser0129/sva
+        ports:
+          - 7777:8080
     
     steps:
     - name: Checkout code
@@ -45,19 +55,14 @@ jobs:
 
     - name: Build and Execute Application
       run: |
-          docker network create my-network
-          docker pull mysql
-          docker run -d --network my-network --name mysql-container -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=sva -p 3306:3306 mysql:latest
-          docker pull justuser0129/sva
-          docker run -d --network my-network --name sva -p 7777:8080 justuser0129/sva:latest
           sudo ufw allow 7777
           mkdir report
           cd report
           docker ps
-          curl -m 60 -X GET 'http://127.0.0.1:7777/api/v1/sbom/test' \
+          curl -m 60 -X GET 'http://localhost:7777/api/v1/sbom/test' \
           -H "accept: */*" \
           -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result1.json
-          curl -m 60 -X GET 'http://127.0.0.1:7777/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' \
+          curl -m 60 -X GET 'http://localhost:7777/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' \
           -H "accept: */*" \
           -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
