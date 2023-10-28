@@ -23,6 +23,11 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    container:
+      image: justuser0129/sva
+      ports:
+        - 7777:8080
+
     services:
       mysql-container:
         image: mysql:latest
@@ -30,10 +35,6 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
-      sva:
-        image: justuser0129/sva
-        ports:
-          - 7777:8080
     
     steps:
     - name: Checkout code
