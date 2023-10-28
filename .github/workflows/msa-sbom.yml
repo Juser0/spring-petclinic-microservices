@@ -43,24 +43,18 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build MySQL
+    - name: Build and Execute Application
       run: |
           docker network create my-network
           docker pull mysql
           docker run -d --network my-network --name mysql-container -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=sva -p 3306:3306 mysql:latest
-
-    - name: Build SBOM Vulnerability Analyzer
-      run: |
-        docker pull justuser0129/sva
-        docker run -d --network my-network --name sva -p 7777:8080 justuser0129/sva:latest
-
-    - name: SBOM Scan and Export Result
-      run: |
-        mkdir report
-        cd report
-        curl -m 60 -X GET "${{ secrets.DOCKER_URL }}" \
-        -H "accept: */*" \
-        -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
+          docker pull justuser0129/sva
+          docker run -d --network my-network --name sva -p 7777:8080 justuser0129/sva:latest
+          mkdir report
+          cd report
+          curl -m 60 -X GET 'http://127.0.0.1:7777/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' \
+          -H "accept: */*" \
+          -H "Content-Type: application/json" | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
         TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
         BASE_URL: ${{ secrets.TRACKER_URL }}
