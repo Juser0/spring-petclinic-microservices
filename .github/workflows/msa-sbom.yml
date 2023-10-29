@@ -51,10 +51,11 @@ jobs:
     - name: Execute Application
       run: |
           mkdir report && cd report
-          curl -m 60 -X GET '${{ secrets.CONTAINER_URL }}/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' | jq '.' > sbom-${{ env.file_name }}-result.json
+          curl -m 60 -X GET ${{ secrets.CONTAINER_URL }}/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.UUID_EN }}&baseUrl=${{ env.BASE_URL }} | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
-        TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
-        BASE_URL: ${{ secrets.TRACKER_URL }}
+        TRACKER_TOKEN: $(echo -n "${{ secrets.TRACKER_TOKEN }}" | xxd -p -c 200 | tr -d '\n' | sed 's/\(..\)/%\1/g')
+        BASE_URL: $(echo -n "${{ secrets.TRACKER_URL }}" | xxd -p -c 200 | tr -d '\n' | sed 's/\(..\)/%\1/g')
+        UUID_EN: UUID_ENCODED=$(echo -n "${{ env.uuid }}" | xxd -p -c 200 | tr -d '\n' | sed 's/\(..\)/%\1/g')
     
     - name: Upload results
       uses: actions/upload-artifact@v3.1.3
