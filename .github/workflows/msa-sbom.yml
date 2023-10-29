@@ -40,7 +40,7 @@ jobs:
     - name: Execute Application
       run: |
           mkdir report && cd report
-          curl -m 60 -X GET "${{ env.CONTAINER_URL }}/api/v1/sbom/report?token=TAAMLs0S8tHbbSMFwTT4mYi4AaAFmuhB&projectId=8dc6df9b-e1d5-4520-882b-1ccf263d808f&baseUrl=https://f41f-117-16-196-176.ngrok-free.app" | jq '.' > sbom-${{ env.file_name }}-result.json
+          curl -m 60 -X GET "http://${{ env.CONTAINER_URL }}/api/v1/sbom/report?token=${{ secrets.TRACKER_TOKEN }}&projectId=8dc6df9b-e1d5-4520-882b-1ccf263d808f&baseUrl=${{ secrets.TRACKER_URL }}" | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
         CONTAINER_URL: ${{ secrets.CONTAINER_URL }}
         TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
