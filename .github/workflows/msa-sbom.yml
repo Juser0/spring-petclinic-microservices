@@ -40,12 +40,8 @@ jobs:
     - name: Execute Application
       run: |
           mkdir report && cd report
-          curl -m 60 -X GET "http://${{ env.CONTAINER_URL }}/api/v1/sbom/report?token=${{ secrets.TRACKER_TOKEN }}&projectId=8dc6df9b-e1d5-4520-882b-1ccf263d808f&baseUrl=${{ secrets.TRACKER_URL }}" | jq '.' > sbom-${{ env.file_name }}-result.json
-      env:
-        CONTAINER_URL: ${{ secrets.CONTAINER_URL }}
-        TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
-        BASE_URL: ${{ secrets.TRACKER_URL }}
-    
+          curl -m 60 -X GET "http://${{ secrets.CONTAINER_URL }}/api/v1/sbom/report?token=${{ secrets.TRACKER_TOKEN }}&projectId=${{ env.uuid }}f&baseUrl=${{ secrets.TRACKER_URL }}" | jq '.' > sbom-${{ env.file_name }}-result.json
+
     - name: Upload results
       uses: actions/upload-artifact@v3.1.3
       with:
