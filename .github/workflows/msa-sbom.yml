@@ -18,8 +18,8 @@ jobs:
           - springcommunity/spring-petclinic-discovery-server:18b3f8d6-c497-413b-94c3-007b9224719a
           - springcommunity/spring-petclinic-config-server:fc4c86a6-1e78-453c-b086-2169857688bd
           - spring-petclinic-microservices_prometheus-server:3c1edbdc-b7d7-4eb1-89ad-ca944218459d
-          - openzipkin/zipkin:596d6ae7-155a-4748-8e86-4551a838c0d7
-          - spring-petclinic-microservices_grafana-server:c367fabe-7864-4bdb-994e-3981270777f1
+          - openzipkin/zipkin:${{ secrets.ZIPKIN_UUID }}
+          - spring-petclinic-microservices_grafana-server:${{ secrets.GRAFANA_SERVER_UUID }}
 
     runs-on: ubuntu-latest
     
@@ -36,25 +36,11 @@ jobs:
         echo "image_name=${image_name}" >> $GITHUB_ENV
         echo "file_name=${file_name}" >> $GITHUB_ENV
         echo "uuid=${uuid}" >> $GITHUB_ENV
-    - name: Execute docker-compose
-      run: docker-compose up -d
-
-    - name: Scan the image and upload dependency results
-      uses: anchore/sbom-action@v0.14.3
-      with:
-        image: ${{ env.image_name }}
-        format: cyclonedx-json
-        artifact-name: sbom-${{ env.file_name }}-cyclonedx.json
-        github-token: ${{ secrets.PERSONAL_TOKEN }}
-        dependency-snapshot: true
 
     - name: Execute Application
       run: |
           mkdir report && cd report
-          TRACKER_TOKEN_ENCODED=$(echo -n "${{ env.TRACKER_TOKEN }}" | xxd -p -c 200 | tr -d '\n' | sed 's/\(..\)/%\1/g')
-          UUID_ENCODED=$(echo -n "${{ env.uuid }}" | xxd -p -c 200 | tr -d '\n' | sed 's/\(..\)/%\1/g')
-          BASE_URL_ENCODED=$(echo -n "${{ env.BASE_URL }}" | xxd -p -c 200 | tr -d '\n' | sed 's/\(..\)/%\1/g')
-          curl -m 60 -X GET ${{ env.CONTAINER_URL }}/api/v1/sbom/report?token=${TRACKER_TOKEN_ENCODED}&projectId=${UUID_ENCODED}&baseUrl=${BASE_URL_ENCODED} | jq '.' > sbom-${{ env.file_name }}-result.json
+          curl -m 60 -X GET ${{ env.CONTAINER_URL }}/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }} | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
         CONTAINER_URL: ${{ secrets.CONTAINER_URL }}
         TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
