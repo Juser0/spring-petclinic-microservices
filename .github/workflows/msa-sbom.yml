@@ -10,16 +10,16 @@ jobs:
     strategy:
       matrix:
         service:
-          - springcommunity/spring-petclinic-customers-service:"9880c46e-53ba-45b4-8241-90e2d769deb6"
-          - springcommunity/spring-petclinic-api-gateway:"c89d2d96-a385-4dc4-9c8b-7ee50432165c"
-          - springcommunity/spring-petclinic-visits-service:"de9c0cf5-c28a-4b88-bd63-5d12cbffe869"
-          - springcommunity/spring-petclinic-admin-server:"8dc6df9b-e1d5-4520-882b-1ccf263d808f"
-          - springcommunity/spring-petclinic-vets-service:"97ac11f5-4310-4bd9-bb8f-7711c2ab9234"
-          - springcommunity/spring-petclinic-discovery-server:"18b3f8d6-c497-413b-94c3-007b9224719a"
-          - springcommunity/spring-petclinic-config-server:"fc4c86a6-1e78-453c-b086-2169857688bd"
-          - spring-petclinic-microservices_prometheus-server:"3c1edbdc-b7d7-4eb1-89ad-ca944218459d"
-          - openzipkin/zipkin:"596d6ae7-155a-4748-8e86-4551a838c0d7"
-          - spring-petclinic-microservices_grafana-server:"c367fabe-7864-4bdb-994e-3981270777f1"
+          - springcommunity/spring-petclinic-customers-service:9880c46e-53ba-45b4-8241-90e2d769deb6
+          - springcommunity/spring-petclinic-api-gateway:c89d2d96-a385-4dc4-9c8b-7ee50432165c
+          - springcommunity/spring-petclinic-visits-service:de9c0cf5-c28a-4b88-bd63-5d12cbffe869
+          - springcommunity/spring-petclinic-admin-server:8dc6df9b-e1d5-4520-882b-1ccf263d808f
+          - springcommunity/spring-petclinic-vets-service:97ac11f5-4310-4bd9-bb8f-7711c2ab9234
+          - springcommunity/spring-petclinic-discovery-server:18b3f8d6-c497-413b-94c3-007b9224719a
+          - springcommunity/spring-petclinic-config-server:fc4c86a6-1e78-453c-b086-2169857688bd
+          - spring-petclinic-microservices_prometheus-server:3c1edbdc-b7d7-4eb1-89ad-ca944218459d
+          - openzipkin/zipkin:596d6ae7-155a-4748-8e86-4551a838c0d7
+          - spring-petclinic-microservices_grafana-server:c367fabe-7864-4bdb-994e-3981270777f1
 
     runs-on: ubuntu-latest
     
@@ -51,7 +51,7 @@ jobs:
     - name: Execute Application
       run: |
           mkdir report && cd report
-          curl -m 60 -X GET ${{ secrets.CONTAINER_URL }}/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }} | jq '.' > sbom-${{ env.file_name }}-result.json
+          curl -m 60 -X GET '${{ secrets.CONTAINER_URL }}/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ env.uuid }}&baseUrl=${{ env.BASE_URL }}' | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
         TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
         BASE_URL: ${{ secrets.TRACKER_URL }}
