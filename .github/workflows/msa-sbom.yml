@@ -9,24 +9,11 @@ jobs:
   scan:
     runs-on: ubuntu-latest
 
-    container:
-      image: justuser0129/sva:latest
-      ports:
-        - 8080:8080
-    
-    services:
-      mysql-container:
-        image: mysql:latest
-        ports:
-          - 3306:3306
-        env:
-          MYSQL_ROOT_PASSWORD: root
-    
     steps:
-    - name: Build and Execute Application
+    - name: Execute Application
       run: |
           mkdir report && cd report
-          curl -m 60 -X GET 'http://localhost:8080/api/v1/sbom/test' > sbom--result1.json
+          curl -m 60 -X GET ${{ secrets.CONTAINER_URL }}/api/v1/sbom/test > sbom--result1.json
     
     - name: Upload results
       uses: actions/upload-artifact@v3.1.3
