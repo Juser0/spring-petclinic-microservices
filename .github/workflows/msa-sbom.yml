@@ -14,7 +14,7 @@ jobs:
       run: echo "${{ secrets.DOCKER_COMPOSE_YML }}" > docker-compose.yml
          
     - name: Docker Compose Action        
-      uses: isbang/compose-action@v1.5.1
+      run: docker compose up -d
 
     - name: Get logs
       run: docker ps
