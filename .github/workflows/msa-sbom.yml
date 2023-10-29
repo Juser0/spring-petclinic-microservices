@@ -57,7 +57,7 @@ jobs:
     - name: Upload BOM to Dependency-Track
       uses: DependencyTrack/gh-upload-sbom@v2.0.0
       with:
-        serverhostname: ${{ secrets.TRACKER_URL }}
+        serverhostname: ${{ secrets.TRACKER_URL_PLAIN }}
         apikey: ${{ secrets.TRACKER_TOKEN }}
         project: ${{ env.uuid }}
         bomfilename: sbom-${{ env.file_name }}-cyclonedx.json
