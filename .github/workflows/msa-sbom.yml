@@ -40,7 +40,7 @@ jobs:
     - name: Execute Application
       run: |
           mkdir report && cd report
-          curl -m 60 -X GET ${{ env.CONTAINER_URL }}/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId="${{ env.uuid }}"&baseUrl=${{ env.BASE_URL }} | jq '.' > sbom-${{ env.file_name }}-result.json
+          curl -m 60 -X GET ${{ env.CONTAINER_URL }}/api/v1/sbom/report?token=${{ env.TRACKER_TOKEN }}&projectId=${{ secrets.ZIPKIN_UUID }}&baseUrl=${{ env.BASE_URL }} | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
         CONTAINER_URL: ${{ secrets.CONTAINER_URL }}
         TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
