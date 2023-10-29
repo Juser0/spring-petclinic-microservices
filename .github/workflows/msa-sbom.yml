@@ -54,10 +54,11 @@ jobs:
           TRACKER_TOKEN_ENCODED=$(echo -n "${{ env.TRACKER_TOKEN }}" | xxd -p -c 200 | tr -d '\n' | sed 's/\(..\)/%\1/g')
           UUID_ENCODED=$(echo -n "${{ env.uuid }}" | xxd -p -c 200 | tr -d '\n' | sed 's/\(..\)/%\1/g')
           BASE_URL_ENCODED=$(echo -n "${{ env.BASE_URL }}" | xxd -p -c 200 | tr -d '\n' | sed 's/\(..\)/%\1/g')
-          curl -m 60 -X GET "${{ secrets.CONTAINER_URL }}/api/v1/sbom/report?token=${TRACKER_TOKEN_ENCODED}&projectId=${UUID_ENCODED}&baseUrl=${BASE_URL_ENCODED}" | jq '.' > sbom-${{ env.file_name }}-result.json
+          curl -m 60 -X GET "${{ env.CONTAINER_URL }}/api/v1/sbom/report?token=${TRACKER_TOKEN_ENCODED}&projectId=${UUID_ENCODED}&baseUrl=${BASE_URL_ENCODED}" | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
-        TRACKER_TOKEN: "${{ secrets.TRACKER_TOKEN }}"
-        BASE_URL: "${{ secrets.TRACKER_URL }}"
+        CONTAINER_URL: ${{ secrets.CONTAINER_URL }}
+        TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
+        BASE_URL: ${{ secrets.TRACKER_URL }}
     
     - name: Upload results
       uses: actions/upload-artifact@v3.1.3
