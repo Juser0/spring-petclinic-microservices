@@ -66,7 +66,7 @@ jobs:
       run: |
         mkdir report
         cd report
-        curl -X GET "${{ env.BASE_URL }}/api/v1/finding/project/${{ env.uuid }}/export" -H "accept: */*" -H "Content-Type: application/json" -H "X-Api-Key: ${{ env.TRACKER_TOKEN }}" | jq '.' > sbom-${{ env.file_name }}-result.json
+        curl -m 120 -X GET "${{ env.BASE_URL }}/api/v1/finding/project/${{ env.uuid }}/export" -H "accept: */*" -H "Content-Type: application/json" -H "X-Api-Key: ${{ env.TRACKER_TOKEN }}" | jq '.' > sbom-${{ env.file_name }}-result.json
       env:
         TRACKER_TOKEN: ${{ secrets.TRACKER_TOKEN }}
         BASE_URL: ${{ secrets.TRACKER_URL }}
