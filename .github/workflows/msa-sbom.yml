@@ -24,7 +24,7 @@ jobs:
         docker run -d --name sva -p 8080:8080 justuser0129/sva:latest
 
     - name: Get logs
-      run: docker ps
+      run: docker logs sva
     
     - name: Build and Execute Application
       run: |
