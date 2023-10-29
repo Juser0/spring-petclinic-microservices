@@ -53,7 +53,6 @@ jobs:
       uses: actions/download-artifact@v2.1.1
       with:
         name: sbom-${{ env.file_name }}-cyclonedx.json
-        path: $PWD
         
     - name: Upload BOM to Dependency-Track
       uses: DependencyTrack/gh-upload-sbom@v2.0.0
