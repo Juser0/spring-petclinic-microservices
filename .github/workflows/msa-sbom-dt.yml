@@ -48,7 +48,20 @@ jobs:
         artifact-name: sbom-${{ env.file_name }}-cyclonedx.json
         github-token: ${{ secrets.PERSONAL_TOKEN }}
         dependency-snapshot: true
-
+        
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v2.1.1
+      with:
+        name: sbom-${{ env.file_name }}-cyclonedx.json
+        
+    - name: Upload BOM to Dependency-Track
+      uses: DependencyTrack/gh-upload-sbom@v2.0.0
+      with:
+        serverhostname: ${{ secrets.TRACKER_URL_PLAIN }}
+        apikey: ${{ secrets.TRACKER_TOKEN }}
+        project: ${{ env.uuid }}
+        bomfilename: sbom-${{ env.file_name }}-cyclonedx.json
+        
     - name: SBOM Scan and Export Result
       run: |
         mkdir report
