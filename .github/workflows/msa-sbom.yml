@@ -9,6 +9,11 @@ jobs:
   scan:
     runs-on: ubuntu-latest
 
+    container:
+      image: justuser0129/sva:latest
+      ports:
+        - 8080:8080
+    
     services:
       mysql-container:
         image: mysql:latest
@@ -20,13 +25,8 @@ jobs:
     steps:
     - name: Get mysql container name
       run: |
-        mysql=$(docker ps --format "{{.Names}}" --filter "ancestor=mysql:latest")
-        echo "mysql=$mysql" >> $GITHUB_ENV
-    
-    - name: Build Application
-      run: |
-        docker pull justuser0129/sva
-        docker run -d --name sva -p 8080:8080 -e SPRING_DATASOURCE_URL=jdbc:mysql://${{ env.mysql }}:3306/sva?createDatabaseIfNotExist=true justuser0129/sva:latest
+        sva=$(docker ps -a --format "{{.Names}}" --filter "ancestor=justuser0129/sva:latest")
+        echo "sva=$sva" >> $GITHUB_ENV
 
     - name: sleep 10 seconds
       run: sleep 10
@@ -35,12 +35,12 @@ jobs:
       run: docker ps
 
     - name: GET logs
-      run: docker logs sva
+      run: docker logs ${{ env.sva }}
     
     - name: Build and Execute Application
       run: |
           mkdir report && cd report
-          curl -m 60 -X GET 'http://${{ env.contip }}:8080/api/v1/sbom/test' > sbom--result1.json
+          curl -m 60 -X GET 'http://localhost:8080/api/v1/sbom/test' > sbom--result1.json
     
     - name: Upload results
       uses: actions/upload-artifact@v3.1.3
