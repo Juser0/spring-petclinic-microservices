@@ -18,8 +18,8 @@ jobs:
           - springcommunity/spring-petclinic-discovery-server:18b3f8d6-c497-413b-94c3-007b9224719a
           - springcommunity/spring-petclinic-config-server:fc4c86a6-1e78-453c-b086-2169857688bd
           - spring-petclinic-microservices_prometheus-server:3c1edbdc-b7d7-4eb1-89ad-ca944218459d
-          - openzipkin/zipkin:${{ secrets.ZIPKIN_UUID }}
-          - spring-petclinic-microservices_grafana-server:${{ secrets.GRAFANA_SERVER_UUID }}
+          - openzipkin/zipkin:"${{ secrets.ZIPKIN_UUID }}"
+          - spring-petclinic-microservices_grafana-server:"${{ secrets.GRAFANA_SERVER_UUID }}"
 
     runs-on: ubuntu-latest
     
