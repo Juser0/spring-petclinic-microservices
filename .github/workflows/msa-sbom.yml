@@ -23,13 +23,15 @@ jobs:
         docker pull justuser0129/sva
         docker run -d --name sva -p 8080:8080 justuser0129/sva:latest
 
-    - name: Get logs
-      run: docker logs sva
+    - name: Get ip addr
+      run: |
+        contip=docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' sva
+        echo "contip=${contip}" >> $GITHUB_ENV
     
     - name: Build and Execute Application
       run: |
           mkdir report && cd report
-          curl -m 60 -X GET 'http://localhost:8080/api/v1/sbom/test' > sbom--result1.json
+          curl -m 60 -X GET 'http://${{ env.contip }}:8080/api/v1/sbom/test' > sbom--result1.json
     
     - name: Upload results
       uses: actions/upload-artifact@v3.1.3
