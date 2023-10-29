@@ -23,20 +23,6 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
     
     steps:
-    - name: Get mysql container name
-      run: |
-        sva=$(docker ps -a --format "{{.Names}}" --filter "ancestor=justuser0129/sva:latest")
-        echo "sva=$sva" >> $GITHUB_ENV
-
-    - name: sleep 10 seconds
-      run: sleep 10
-
-    - name: GET docker ps
-      run: docker ps
-
-    - name: GET logs
-      run: docker logs ${{ env.sva }}
-    
     - name: Build and Execute Application
       run: |
           mkdir report && cd report
