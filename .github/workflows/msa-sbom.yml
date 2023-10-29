@@ -36,6 +36,26 @@ jobs:
         echo "image_name=${image_name}" >> $GITHUB_ENV
         echo "file_name=${file_name}" >> $GITHUB_ENV
         echo "uuid=${uuid}" >> $GITHUB_ENV
+        
+    - name: Execute docker-compose
+      run: docker-compose up -d
+
+    - name: Scan the image and upload dependency results
+      uses: anchore/sbom-action@v0.14.3
+      with:
+        image: ${{ env.image_name }}
+        format: cyclonedx-json
+        artifact-name: sbom-${{ env.file_name }}-cyclonedx.json
+        github-token: ${{ secrets.PERSONAL_TOKEN }}
+        dependency-snapshot: true
+
+    - name: Upload BOM to Dependency-Track
+      uses: DependencyTrack/gh-upload-sbom@v2.0.0
+      with:
+        serverhostname: ${{ secrets.TRACKER_URL }}
+        apikey: ${{ secrets.TRACKER_TOKEN }}
+        project: ${{ env.uuid }}
+        bomfilename: sbom-${{ env.file_name }}-cyclonedx.json
 
     - name: Execute Application
       run: |
