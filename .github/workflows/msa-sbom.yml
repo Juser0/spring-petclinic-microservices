@@ -28,8 +28,14 @@ jobs:
         contip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' sva)
         echo "contip=$contip" >> $GITHUB_ENV
 
+    - name: sleep 10 seconds
+      run: sleep 10
+
+    - name: GET docker ps
+      run: docker ps
+
     - name: GET logs
-      run : docker logs sva
+      run: docker logs sva
     
     - name: Build and Execute Application
       run: |
