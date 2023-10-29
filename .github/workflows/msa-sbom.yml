@@ -8,13 +8,20 @@ on:
 jobs:
   scan:
     runs-on: ubuntu-latest
+
+    services:
+      mysql-container:
+        image: mysql:latest
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
     
     steps:
-    - name: Docker Compose set
-      run: echo "${{ secrets.DOCKER_COMPOSE_YML }}" > docker-compose.yml
-         
-    - name: Docker Compose Action        
-      run: docker compose up -d
+    - name: Build Application
+      run: |
+        docker pull justuser0129/sva
+        docker run -d --name sva -p 8080:8080 justuser0129/sva:latest
 
     - name: Get logs
       run: docker ps
